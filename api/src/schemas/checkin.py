@@ -25,3 +25,18 @@ class CheckinDaily(BaseModel):
     date: datetime
     project_count: int = Field(description="Number of unique projects per day")
     total_hours: float
+
+
+class UserCheckinSummary(BaseModel):
+    total_hours: float
+    projects: list[str]
+    project_count: int
+    user: str
+
+
+class CheckinPage(BaseModel):
+    items: list[Checkin]
+    total: int
+    page: int
+    size: int
+    pages: int
