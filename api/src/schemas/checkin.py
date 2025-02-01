@@ -18,4 +18,10 @@ class Checkin(BaseModel):
 class CheckinAggregate(BaseModel):
     total_hours: float
     project: str
-    user_count: int = Field(description="Number of unique users")
+    project_count: int = Field(description="Number of unique projects")
+
+
+class CheckinDaily(BaseModel):
+    date: datetime
+    project_count: int = Field(description="Number of unique projects per day")
+    total_hours: float

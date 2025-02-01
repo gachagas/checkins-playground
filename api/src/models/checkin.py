@@ -14,3 +14,6 @@ class Checkin(BaseModel):
     timestamp: Mapped[datetime] = mapped_column(DateTime, index=True)
     hours: Mapped[float] = mapped_column(Float)
     project: Mapped[str] = mapped_column(String, index=True)
+
+
+# TODO INCREMENT BY UUID
