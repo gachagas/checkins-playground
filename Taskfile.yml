@@ -1,0 +1,24 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Build and start Docker containers
+    cmds:
+      - docker compose up -d
+  
+  clean:
+    desc: Remove containers
+    cmds:
+      - docker compose down
+
+  generate-migrations:
+    desc: Generate migrations
+    dir: ./api
+    cmds:
+      - alembic revision --autogenerate -m {{.CLI_ARGS}}
+
+  migrate:
+    desc: Run database migrations
+    dir: ./api
+    cmds:
+      - alembic upgrade head
