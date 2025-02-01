@@ -15,10 +15,16 @@ tasks:
     desc: Generate migrations
     dir: ./api
     cmds:
-      - alembic revision --autogenerate -m {{.CLI_ARGS}}
+      - uv run alembic revision --autogenerate -m {{.CLI_ARGS}}
 
   migrate:
     desc: Run database migrations
     dir: ./api
     cmds:
-      - alembic upgrade head
+      - uv run alembic upgrade head
+
+  api-dev:
+    desc: Run API in development mode
+    dir: ./api
+    cmds:
+      - uv run fastapi dev src/main.py
