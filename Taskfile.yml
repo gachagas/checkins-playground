@@ -28,3 +28,6 @@ tasks:
     dir: ./api
     cmds:
       - uv run fastapi dev src/main.py --reload
+
+volumes:
+  postgres:
