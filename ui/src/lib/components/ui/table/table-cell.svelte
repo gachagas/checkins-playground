@@ -1,6 +1,6 @@
 <script lang="ts">
+	import type { HTMLTdAttributes } from "svelte/elements";
 	import type { WithElementRef } from "bits-ui";
-	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
 
 	let {
@@ -8,13 +8,16 @@
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: WithElementRef<HTMLTdAttributes> = $props();
 </script>
 
-<div
+<td
 	bind:this={ref}
-	class={cn("mt-4 flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0", className)}
+	class={cn(
+		"p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}
-</div>
+</td>
