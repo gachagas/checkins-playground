@@ -26,6 +26,15 @@ async def read_checkins(
     return checkins_service.get_paginated_checkins(db, page, size)
 
 
+@router.get("/users", response_model=List[str])
+async def get_users(
+    db: Session = Depends(get_db),
+) -> List[str]:
+    """Get a list of all users."""
+
+    return checkins_service.get_users(db)
+
+
 @router.get("/user-summary", response_model=UserCheckinSummary)
 async def get_user_summary(
     user: str = Query(..., description="Username to get summary for"),

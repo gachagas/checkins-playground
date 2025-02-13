@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import HTTPException
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from src.models.checkin import Checkin as CheckinModel
@@ -133,3 +133,11 @@ def get_filtered_checkins(
     return CheckinPage(
         items=items, total=total, page=page, size=size, pages=pages
     )
+
+
+def get_users(db: Session) -> List[str]:
+    """Get a list of all users."""
+
+    stmt = select(CheckinModel.user).distinct()
+
+    return db.scalars(stmt).all()
