@@ -29,5 +29,11 @@ tasks:
     cmds:
       - uv run fastapi dev src/main.py --reload
 
+  ui-dev:
+    desc: Run UI in development mode
+    dir: ./ui
+    cmds:
+      - npm run dev
+
 volumes:
   postgres:

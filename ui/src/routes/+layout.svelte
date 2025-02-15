@@ -1,14 +1,18 @@
 <script lang="ts">
-	import Header from './Header.svelte';
+	import { browser } from '$app/environment';
+	import { ModeWatcher } from 'mode-watcher';
 	import '../app.css';
+	import Header from './Header.svelte';
 
 	let { children } = $props();
 </script>
 
+<ModeWatcher />
+
 <div class="app">
 	<Header />
 
-	<main>
+	<main class="p-16 bg-slate-700">
 		{@render children()}
 	</main>
 
@@ -30,7 +34,7 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		/* padding: 1rem; */
 		width: 100%;
 		max-width: 64rem;
 		margin: 0 auto;
