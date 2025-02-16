@@ -77,3 +77,14 @@ async def get_checkins_by_date(
     return checkins_service.get_filtered_checkins(
         db, page, size, start_date, end_date, user
     )
+
+
+@router.get("/user/{user}", response_model=CheckinPage)
+async def get_user_checkins(
+    user: str,
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=2, le=100),
+    db: Session = Depends(get_db),
+) -> CheckinPage:
+    """Get a paginated list of checkins for a specific user."""
+    return checkins_service.get_user_checkins(db, user, page, size)

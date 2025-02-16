@@ -141,3 +141,24 @@ def get_users(db: Session) -> List[str]:
     stmt = select(CheckinModel.user).distinct()
 
     return db.scalars(stmt).all()
+
+
+def get_user_checkins(
+    db: Session, user: str, page: int, size: int
+) -> CheckinPage:
+    """Get a paginated list of checkins for a specific user."""
+    query = db.query(CheckinModel).filter(CheckinModel.user == user)
+
+    total = query.count()
+    offset = (page - 1) * size
+    items = (
+        query.order_by(CheckinModel.timestamp.desc())
+        .offset(offset)
+        .limit(size)
+        .all()
+    )
+    pages = math.ceil(total / size)
+
+    return CheckinPage(
+        items=items, total=total, page=page, size=size, pages=pages
+    )

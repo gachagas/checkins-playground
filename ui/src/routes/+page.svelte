@@ -1,63 +1,65 @@
 <script lang="ts">
-  import { getUsers } from '$lib/api';
+  import { getUsers, getUserCheckins } from '$lib/api';
   import * as Select from '$lib/components/ui/select/index.js';
   import { createQuery } from '@tanstack/svelte-query';
+  import { columns } from './payments/columns';
+  import DataTable from './payments/data-table.svelte';
 
-  type Payment = {
-    id: string;
-    amount: number;
-    status: 'pending' | 'processing' | 'success' | 'failed';
-    email: string;
-  };
+  let value = $state('');
 
-  const data: Payment[] = [
-    {
-      id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com'
-    },
-    {
-      id: '489e1d42',
-      amount: 125,
-      status: 'processing',
-      email: 'example@gmail.com'
-    }
-  ];
+  let isUserCheckinsEnabled = $derived(value !== '');
 
-  let value = $state('hello');
-
-  const query = createQuery({
+  const users = createQuery({
     queryKey: ['users'],
     queryFn: () => getUsers()
   });
+
+  const userCheckins = createQuery({
+    queryKey: ['user-checkins'],
+    queryFn: () => getUserCheckins(value),
+    enabled: () => isUserCheckinsEnabled
+  });
+
+  const triggerContent = $derived(value === '' ? 'Select a user...' : value);
 </script>
 
 <section>
-  {value}
-
-  <Select.Root type="single" disabled={$query.isPending || $query.isError} bind:value>
+  {value !== ''}
+  <Select.Root
+    type="single"
+    onValueChange={() => {
+      $userCheckins.refetch();
+    }}
+    disabled={$users.isPending || $users.isError}
+    bind:value
+  >
     <Select.Trigger class="px-5 w-[180px] m-2">
-      {#if $query.isPending}
+      {#if $users.isPending}
         Loading users...
-      {:else if $query.isError}
+      {:else if $users.isError}
         Error loading users
-      {:else if $query.data?.data}
-        {$query.data?.data[0]}
+      {:else if $users.data?.data}
+        {triggerContent}
       {:else}
-        Select a value
+        Unhandled State
       {/if}
     </Select.Trigger>
     <Select.Content>
-      <Select.Item value="light">Light</Select.Item>
-      <Select.Item value="dark">Dark</Select.Item>
-      <Select.Item value="system">System</Select.Item>
+      {#each $users.data?.data as user}
+        <Select.Item value={user}>{user}</Select.Item>
+      {/each}
     </Select.Content>
   </Select.Root>
-  <div class="text-red-500">The selected value is: {value}</div>
 </section>
+{$userCheckins.data?.data.items[0].timestamp}
 <section>
-  <div>
-    <h1>Checkins</h1>
-  </div>
+  {#if $userCheckins.isPending}
+    Loading users...
+  {:else if $userCheckins.isError}
+    Error loading users
+  {:else if $userCheckins.data?.data.items}
+    <DataTable data={$userCheckins.data.data.items} {columns} />
+  {:else}
+    Select a value
+  {/if}
 </section>
