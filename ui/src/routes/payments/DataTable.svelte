@@ -5,8 +5,10 @@
   import {
     type ColumnDef,
     type PaginationState,
+    type SortingState,
     getPaginationRowModel,
-    getCoreRowModel
+    getCoreRowModel,
+    getSortedRowModel
   } from '@tanstack/table-core';
 
   type DataTableProps<TData, TValue> = {
@@ -17,15 +19,29 @@
   let { data, columns }: DataTableProps<TData, TValue> = $props();
 
   let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
+  let sorting = $state<SortingState>([]);
 
   const table = createSvelteTable({
     get data() {
       return data;
     },
     columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       get pagination() {
         return pagination;
+      },
+      get sorting() {
+        return sorting;
+      }
+    },
+    onSortingChange: (updater) => {
+      if (typeof updater === 'function') {
+        sorting = updater(sorting);
+      } else {
+        sorting = updater;
       }
     },
     onPaginationChange: (updater) => {
@@ -34,9 +50,7 @@
       } else {
         pagination = updater;
       }
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
+    }
   });
 
   const getCurrentPageNumber = () => table.getState().pagination.pageIndex + 1;

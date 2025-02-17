@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -44,6 +44,12 @@ def parse_timestamp(ts_str: str) -> datetime:
             raise ValueError(f"Could not parse timestamp: {ts_str}") from e
 
 
+def round_datetime_to_nearest_second(dt: datetime) -> datetime:
+    if dt.microsecond >= 500_000:
+        dt += timedelta(seconds=1)
+    return dt.replace(microsecond=0)
+
+
 def load_checkins(csv_path: str, db: Session):
     """Load checkins from CSV file into database."""
     print(f"Loading checkins from {csv_path}")
@@ -51,16 +57,18 @@ def load_checkins(csv_path: str, db: Session):
 
     # Convert timestamps
     df["timestamp"] = df["timestamp"].apply(parse_timestamp)
-
     # Create Checkin objects
     checkins = []
     for _, row in df.iterrows():
+        rounded_timestamp = round_datetime_to_nearest_second(row["timestamp"])
+
         checkin = Checkin(
             user=row["user"],
-            timestamp=row["timestamp"],
+            timestamp=rounded_timestamp,
             hours=float(row["hours"]),
             project=row["project"],
         )
+        print(checkin.hours)
         checkins.append(checkin)
 
     # Bulk insert records

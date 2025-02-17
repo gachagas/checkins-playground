@@ -2,12 +2,12 @@
   import { getUsers, getUserCheckins } from '$lib/api';
   import * as Select from '$lib/components/ui/select/index.js';
   import { createQuery } from '@tanstack/svelte-query';
+  import DataTable from './payments/DataTable.svelte';
   import { columns } from './payments/columns';
-  import DataTable from './payments/data-table.svelte';
 
-  let value = $state('');
+  let selectedUser = $state('');
 
-  let isUserCheckinsEnabled = $derived(value !== '');
+  let isUserCheckinsEnabled = $derived(selectedUser !== '');
 
   const users = createQuery({
     queryKey: ['users'],
@@ -16,22 +16,30 @@
 
   const userCheckins = createQuery({
     queryKey: ['user-checkins'],
-    queryFn: () => getUserCheckins(value),
+    queryFn: () => getUserCheckins(selectedUser),
     enabled: () => isUserCheckinsEnabled
   });
 
-  const triggerContent = $derived(value === '' ? 'Select a user...' : value);
+  $effect(() => {
+    if ($users.data?.data && selectedUser === '') {
+      selectedUser = $users.data?.data[0];
+      $userCheckins.refetch();
+    }
+  });
+
+  const triggerContent = $derived(selectedUser === '' ? 'Select a user...' : selectedUser);
 </script>
 
 <section>
-  {value !== ''}
+  {#if $users.data?.data}say something{/if}
+  {selectedUser !== ''}
   <Select.Root
     type="single"
     onValueChange={() => {
       $userCheckins.refetch();
     }}
     disabled={$users.isPending || $users.isError}
-    bind:value
+    bind:value={selectedUser}
   >
     <Select.Trigger class="px-5 w-[180px] m-2">
       {#if $users.isPending}

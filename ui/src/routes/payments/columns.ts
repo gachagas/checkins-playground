@@ -1,32 +1,53 @@
 import { renderSnippet } from '$lib/components/ui/data-table/index.js';
+import { renderComponent } from '$lib/components/ui/data-table/index.js';
 import type { ColumnDef } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
+import DataTableEmailButton from './data-table-email-button.svelte';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'success' | 'failed';
-  email: string;
+export type Checkin = {
+  user: string;
+  timestamp: number;
+  hours: 'pending' | 'processing' | 'success' | 'failed';
+  project: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Checkin>[] = [
   {
     accessorKey: 'user',
-    header: 'user'
+    header: ({ column }) =>
+      renderComponent(DataTableEmailButton, {
+        onclick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+        name: 'user'
+      })
   },
   {
     accessorKey: 'timestamp',
-    header: 'TimeStamp'
+    header: ({ column }) =>
+      renderComponent(DataTableEmailButton, {
+        onclick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+        name: 'timestamp'
+      }),
+    cell: ({ row }) => {
+      return new Date(row.original.timestamp).toLocaleString();
+    }
   },
   {
     accessorKey: 'hours',
-    header: 'Hours'
+    header: ({ column }) =>
+      renderComponent(DataTableEmailButton, {
+        onclick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+        name: 'hours'
+      })
   },
   {
     accessorKey: 'project',
-    header: 'Project'
+    header: ({ column }) =>
+      renderComponent(DataTableEmailButton, {
+        onclick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+        name: 'project'
+      })
   }
   // {
   //   accessorKey: 'amount',

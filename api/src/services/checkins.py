@@ -138,7 +138,7 @@ def get_filtered_checkins(
 def get_users(db: Session) -> List[str]:
     """Get a list of all users."""
 
-    stmt = select(CheckinModel.user).distinct()
+    stmt = select(CheckinModel.user).distinct().order_by(CheckinModel.user)
 
     return db.scalars(stmt).all()
 

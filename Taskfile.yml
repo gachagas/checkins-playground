@@ -23,6 +23,15 @@ tasks:
     cmds:
       - uv run alembic upgrade head
 
+  reload-fixtures:
+    desc: Reload fixtures
+    dir: ./api
+    cmds:
+      - task clean
+      - task 
+      - ./wait-for-it.sh postgres:5432 -- uv run alembic upgrade head
+      - uv run python -m src.scripts.load_checkins
+
   api-dev:
     desc: Run API in development mode
     dir: ./api
