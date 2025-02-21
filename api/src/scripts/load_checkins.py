@@ -68,7 +68,6 @@ def load_checkins(csv_path: str, db: Session):
             hours=float(row["hours"]),
             project=row["project"],
         )
-        print(checkin.hours)
         checkins.append(checkin)
 
     # Bulk insert records
